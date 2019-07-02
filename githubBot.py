@@ -30,7 +30,7 @@ for java_repo_dict in java_repo_dicts:
         java_desriptions.append(java_repo_dict['description'])
 
 # Bot tlg###
-bot = telebot.TeleBot('512500856:AAEq_uMUB5omgDPdjuYTGLHw88JphT8TnfA') #@Mobbius_Bot
+bot = telebot.TeleBot('') #@Mobbius_Bot
 
 @bot.message_handler(commands=['start','help'])
 def send_welcome(message):
