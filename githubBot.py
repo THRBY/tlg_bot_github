@@ -8,11 +8,11 @@ bot = telebot.TeleBot('512500856:AAEq_uMUB5omgDPdjuYTGLHw88JphT8TnfA') #@Mobbius
 
 user_dict = {}
 
-class User:
-    def __init__(self, name):
-        self.name = name
-        self.age = None
-        self.sex = None
+class Git_repos:
+    def __init__(self, description):
+        self.description = description
+        self.count_top = None
+        
 
 @bot.message_handler(commands=['start','help'])
 def send_welcome(message):
@@ -22,8 +22,8 @@ def send_welcome(message):
 def desriptions_name(message):
     try:
         chat_id = message.chat.id
-        name = message.text
-        user = User(name)
+        description = message.text
+        user = Git_repos(description)
         user_dict[chat_id] = user
         msg = bot.send_message(chat_id, 'Какое колличество репозиториев вывести?')
         bot.register_next_step_handler(msg, top_count_range)
