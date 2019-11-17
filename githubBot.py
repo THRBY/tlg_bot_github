@@ -12,7 +12,24 @@ class Git_repos:
     def __init__(self, description):
         self.description = description
         self.count_top = None
-        
+        self.language = None
+
+def send_url(self,type_url):
+
+        temp_url = 'https://api.github.com/search/repositories?q=language:{}'.format(type_url)
+
+        temp_url_r = requests.get(temp_url)
+        temp_url_response_dict = temp_url_r.json()
+        temp_url_repo_dicts = temp_url_response_dict['items']
+
+        temp_url_names, temp_url_repository, temp_url_desriptions = [], [], []
+
+        for temp_url_repo_dict in temp_url_repo_dicts:
+                temp_url_names.append(temp_url_response_dict['name'])
+                temp_url_repository.append(temp_url_repo_dict['html_url'])
+                temp_url_desriptions.append(temp_url_repo_dict['description'])
+
+        print(temp_url_names + '\n' + temp_url_repository)
 
 @bot.message_handler(commands=['start','help'])
 def send_welcome(message):
@@ -40,10 +57,13 @@ def top_count_range(message):
                         return
                 user = user_dict[chat_id]
                 user.count_top = count_top
-                markup = types.ReplyKeyboardMarkup(one_time_keyboard=True, resize_keyboard=True)
-                markup.add('python', 'java')
-                msg = bot.send_message(chat_id, 'Какой язык программирования?', reply_markup = markup)
-                bot.register_next_step_handler(msg, repeat_all_messages)
+                
+                #markup = types.ReplyKeyboardMarkup(one_time_keyboard=True, resize_keyboard=True)
+                #markup.add('python', 'java')                
+                #msg = bot.send_message(chat_id, 'Какой язык программирования?', reply_markup = markup)
+
+                msg = bot.send_message(chat_id, 'Какой язык программирования?')
+                bot.register_next_step_handler(msg, repeat_all_messages2)
         except Exception as e:
                 bot.send_message(chat_id, 'oooops')
 
@@ -59,6 +79,40 @@ def repeat_all_messages(message):
                 if text == 'java':
                         for i in range(int(user.count_top)):
                                 bot.send_message(chat_id, githubAPI.java_names[i] + '\n\n' + githubAPI.java_repository[i])
+        except Exception as e:
+                bot.send_message(chat_id, 'oooops')
+
+def repeat_all_messages2(message):
+        try:
+                chat_id = message.chat.id
+                language = message.text.lower()
+                user = user_dict[chat_id]
+                user.language = language
+
+                temp_url = 'https://api.github.com/search/repositories'
+                lang = user.language
+                print(lang)
+                pad = {'q':'language:%s' %lang}
+                work_url = requests.get(temp_url, params = pad)
+                print(work_url.url)
+
+                
+                language_response_dict = work_url.json()
+                language_repo_dicts = language_response_dict['items']
+
+                language_names, language_repositorys, language_desriptions = [], [], []
+
+                for language_repo_dict in language_repo_dicts:
+                        language_names.append(language_repo_dict['name'])
+                        language_repositorys.append(language_repo_dict['html_url'])
+                        language_desriptions.append(language_repo_dict['description'])
+                
+                print(user.count_top)
+
+                for i in range(int(user.count_top)):
+                                bot.send_message(chat_id, language_names[i] + '\n\n' + language_repositorys[i])
+
+                
         except Exception as e:
                 bot.send_message(chat_id, 'oooops')
 
