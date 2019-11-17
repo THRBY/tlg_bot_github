@@ -1,8 +1,15 @@
 import requests
+import githubBot
 
 #url
 py_url = 'https://api.github.com/search/repositories?q=language:python&sort=stars'
 java_url = 'https://api.github.com/search/repositories?q=language:java&sort=stars'
+
+temp_url = 'https://api.github.com/search/repositories?q=language:'
+
+###
+
+###
 
 #python#
 py_r = requests.get(py_url)
