@@ -14,26 +14,9 @@ class Git_repos:
         self.count_top = None
         self.language = None
 
-def send_url(self,type_url):
-
-        temp_url = 'https://api.github.com/search/repositories?q=language:{}'.format(type_url)
-
-        temp_url_r = requests.get(temp_url)
-        temp_url_response_dict = temp_url_r.json()
-        temp_url_repo_dicts = temp_url_response_dict['items']
-
-        temp_url_names, temp_url_repository, temp_url_desriptions = [], [], []
-
-        for temp_url_repo_dict in temp_url_repo_dicts:
-                temp_url_names.append(temp_url_response_dict['name'])
-                temp_url_repository.append(temp_url_repo_dict['html_url'])
-                temp_url_desriptions.append(temp_url_repo_dict['description'])
-
-        print(temp_url_names + '\n' + temp_url_repository)
-
 @bot.message_handler(commands=['start','help'])
 def send_welcome(message):
-        bot.send_message(message.chat.id, 'Hi!\nВыберите нужны раздел (такой фичи пока нет...)')
+        bot.send_message(message.chat.id, 'Hi!\nВыберите нужны раздел. Нужно английском')
         bot.register_next_step_handler(message, desriptions_name)
 
 def desriptions_name(message):
@@ -62,40 +45,26 @@ def top_count_range(message):
                 #markup.add('python', 'java')                
                 #msg = bot.send_message(chat_id, 'Какой язык программирования?', reply_markup = markup)
 
-                msg = bot.send_message(chat_id, 'Какой язык программирования?')
-                bot.register_next_step_handler(msg, repeat_all_messages2)
+                msg = bot.send_message(chat_id, 'Ведите язык программирования?')
+                bot.register_next_step_handler(msg, send_programming_language)
         except Exception as e:
                 bot.send_message(chat_id, 'oooops')
 
-#@bot.message_handler(content_types=["text"])
-def repeat_all_messages(message):
-        try:
-                chat_id = message.chat.id
-                text = message.text.lower()
-                user = user_dict[chat_id]
-                if text == 'python':                
-                        for i in range(int(user.count_top)):
-                                bot.send_message(chat_id, githubAPI.py_names[i] + '\n\n' + githubAPI.py_repositorys[i])
-                if text == 'java':
-                        for i in range(int(user.count_top)):
-                                bot.send_message(chat_id, githubAPI.java_names[i] + '\n\n' + githubAPI.java_repository[i])
-        except Exception as e:
-                bot.send_message(chat_id, 'oooops')
 
-def repeat_all_messages2(message):
+def send_programming_language(message):
         try:
                 chat_id = message.chat.id
                 language = message.text.lower()
                 user = user_dict[chat_id]
                 user.language = language
-
-                temp_url = 'https://api.github.com/search/repositories'
+                   
+                language_url = 'https://api.github.com/search/repositories'
                 lang = user.language
-                print(lang)
-                pad = {'q':'language:%s' %lang}
-                work_url = requests.get(temp_url, params = pad)
-                print(work_url.url)
-
+                descrip = user.description
+                
+                #pad = {'q':'language:%s' %lang}
+                pad = {'q': '{0}:{1}'.format(descrip, lang)}
+                work_url = requests.get(language_url, params = pad)             
                 
                 language_response_dict = work_url.json()
                 language_repo_dicts = language_response_dict['items']
@@ -107,8 +76,6 @@ def repeat_all_messages2(message):
                         language_repositorys.append(language_repo_dict['html_url'])
                         language_desriptions.append(language_repo_dict['description'])
                 
-                print(user.count_top)
-
                 for i in range(int(user.count_top)):
                                 bot.send_message(chat_id, language_names[i] + '\n\n' + language_repositorys[i])
 

@@ -7,8 +7,6 @@ java_url = 'https://api.github.com/search/repositories?q=language:java&sort=star
 
 books_url = 'https://api.github.com/search/repositories?q=books'
 
-#temp_url = 'https://api.github.com/search/repositories?q=language:{}'.format(githubBot.user_dict)
-
 ###
 books_r = requests.get(books_url)
 books_response_dict = books_r.json()
